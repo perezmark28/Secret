@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music | For My Love</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+
+  <nav class="nav">
+    <a href="home.html" class="nav-link">Home</a>
+    <a href="memories.html" class="nav-link">Memories</a>
+    <a href="gallery.html" class="nav-link">Gallery</a>
+    <a href="message.html" class="nav-link">Message</a>
+    <a href="reasons.html" class="nav-link">Reasons</a>
+    <a href="music.html" class="nav-link active">Music</a>
+  </nav>
+
+  <main>
+    <section class="section page-content music-page">
+      <h2 class="music-page-title">Music</h2>
+      <p class="music-page-subtitle">This song reminds me of you.</p>
+
+      <div class="music-card">
+        <div class="music-card-art">
+          <iframe class="spotify-embed" src="https://open.spotify.com/embed/track/68vgtRHr7iZHpzGpon6Jlo?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="My Boo on Spotify"></iframe>
+          <div class="music-waveform" aria-hidden="true"></div>
+        </div>
+        <div class="music-card-info">
+          <p class="music-card-title">My Boo</p>
+          <p class="music-card-artist">USHER, Alicia Keys</p>
+          <a href="https://open.spotify.com/track/68vgtRHr7iZHpzGpon6Jlo?si=007580cb8bc4446c" class="music-card-link" target="_blank" rel="noopener">Play on Spotify</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">Made with ❤️ for Jona</p>
+    <p class="footer-sub">Forever and Always</p>
+  </footer>
+
+  <script>if(!sessionStorage.getItem('forMyLoveUnlocked'))window.location.replace('index.html');</script>
+  <script src="script.js"></script>
+</body>
+</html>

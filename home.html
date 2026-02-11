@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | For My Love</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+
+  <nav class="nav">
+    <a href="home.html" class="nav-link active">Home</a>
+    <a href="memories.html" class="nav-link">Memories</a>
+    <a href="gallery.html" class="nav-link">Gallery</a>
+    <a href="message.html" class="nav-link">Message</a>
+    <a href="reasons.html" class="nav-link">Reasons</a>
+    <a href="music.html" class="nav-link">Music</a>
+  </nav>
+
+  <main>
+    <section class="section hero">
+      <h1 class="welcome">Welcome, Jona ❤️</h1>
+      <div class="bear-gif-wrap">
+        <img src="assets/bouquet.png" alt="Sunflower bouquet" class="bear-gif">
+      </div>
+      <p class="intro">
+        This website is for our memories in every month we spent together, and how we surpassed every problem we encountered. Through ups and downs, we're still together, always stronger.
+      </p>
+      <blockquote class="quote">
+        "Love isn't about how many days or months you've been together, it's about how much you love each other every single day." ❤️
+      </blockquote>
+      <p class="sign-off">Forever and Always, Yours ❤️</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">Made with ❤️ for Jona</p>
+    <p class="footer-sub">Forever and Always</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    if (!sessionStorage.getItem('forMyLoveUnlocked')) {
+      window.location.replace('index.html');
+    }
+  </script>
+</body>
+</html>

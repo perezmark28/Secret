@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memories | For My Love</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+
+  <nav class="nav">
+    <a href="home.html" class="nav-link">Home</a>
+    <a href="memories.html" class="nav-link active">Memories</a>
+    <a href="gallery.html" class="nav-link">Gallery</a>
+    <a href="message.html" class="nav-link">Message</a>
+    <a href="reasons.html" class="nav-link">Reasons</a>
+    <a href="music.html" class="nav-link">Music</a>
+  </nav>
+
+  <main>
+    <section class="section page-content">
+      <h2>Our Memories</h2>
+      <p class="section-text">Every moment with you is worth keeping. Add your favorite memories here.</p>
+
+      <div class="memories-grid" id="memoriesGrid"></div>
+
+      <div class="upload-wrap">
+        <input type="file" id="memoriesUpload" accept="image/*" multiple hidden>
+        <button type="button" class="upload-btn" id="uploadBtn">Upload photo</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">Made with ❤️ for Jona</p>
+    <p class="footer-sub">Forever and Always</p>
+  </footer>
+
+  <script>if(!sessionStorage.getItem('forMyLoveUnlocked'))window.location.replace('index.html');</script>
+  <script src="script.js"></script>
+  <script>
+    (function() {
+      const STORAGE_KEY = 'memories-photos';
+      const grid = document.getElementById('memoriesGrid');
+      const input = document.getElementById('memoriesUpload');
+      const btn = document.getElementById('uploadBtn');
+
+      function getPhotos() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function savePhotos(photos) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+      }
+
+      function render() {
+        const photos = getPhotos();
+        grid.innerHTML = '';
+        photos.forEach(function(src, index) {
+          const item = document.createElement('div');
+          item.className = 'memories-item';
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = 'Memory';
+          item.appendChild(img);
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'memories-remove';
+          removeBtn.type = 'button';
+          removeBtn.setAttribute('aria-label', 'Remove photo');
+          removeBtn.innerHTML = '×';
+          removeBtn.addEventListener('click', function() {
+            const list = getPhotos();
+            list.splice(index, 1);
+            savePhotos(list);
+            render();
+          });
+          item.appendChild(removeBtn);
+          grid.appendChild(item);
+        });
+      }
+
+      btn.addEventListener('click', function() {
+        input.click();
+      });
+
+      input.addEventListener('change', function() {
+        const files = this.files;
+        if (!files.length) return;
+        const photos = getPhotos();
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          if (!file.type.startsWith('image/')) continue;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            photos.push(e.target.result);
+            savePhotos(photos);
+            render();
+          };
+          reader.readAsDataURL(file);
+        }
+        this.value = '';
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
