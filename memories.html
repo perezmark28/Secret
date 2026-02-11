@@ -32,7 +32,7 @@
         <input type="file" id="memoriesUpload" accept="image/*" multiple hidden>
         <button type="button" class="upload-btn" id="uploadBtn">Upload photo</button>
       </div>
-      <p class="memories-note">Photos are stored only in this browser/device. They won’t appear on another phone or computer. You can add as many as you like—they show 3 per row.</p>
+      <p class="memories-note">Photos are saved on the server and sync across all your devices. You can add as many as you like—they show 3 per row.</p>
     </section>
   </main>
 
@@ -49,8 +49,9 @@
       const grid = document.getElementById('memoriesGrid');
       const input = document.getElementById('memoriesUpload');
       const btn = document.getElementById('uploadBtn');
+      let useApi = true;
 
-      function getPhotos() {
+      function getPhotosLocal() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           return raw ? JSON.parse(raw) : [];
@@ -59,14 +60,33 @@
         }
       }
 
-      function savePhotos(photos) {
+      function savePhotosLocal(photos) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
       }
 
-      function render() {
-        const photos = getPhotos();
+      function addPhotosLocal(files) {
+        var toAdd = [];
+        var pending = files.length;
+        if (pending === 0) return;
+        files.forEach(function(file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            toAdd.push(e.target.result);
+            pending--;
+            if (pending === 0) {
+              savePhotosLocal(getPhotosLocal().concat(toAdd));
+              render(getPhotosLocal());
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function render(photos) {
         grid.innerHTML = '';
-        photos.forEach(function(src, index) {
+        (photos || []).forEach(function(photo, index) {
+          const src = typeof photo === 'string' ? photo : photo.url;
+          const id = typeof photo === 'string' ? index : photo.id;
           const item = document.createElement('div');
           item.className = 'memories-item';
           const img = document.createElement('img');
@@ -79,14 +99,32 @@
           removeBtn.setAttribute('aria-label', 'Remove photo');
           removeBtn.innerHTML = '×';
           removeBtn.addEventListener('click', function() {
-            const list = getPhotos();
-            list.splice(index, 1);
-            savePhotos(list);
-            render();
+            if (useApi) {
+              fetch('/api/memories/' + encodeURIComponent(id), { method: 'DELETE' })
+                .then(function() { return load(); });
+            } else {
+              const list = getPhotosLocal();
+              list.splice(index, 1);
+              savePhotosLocal(list);
+              render(list);
+            }
           });
           item.appendChild(removeBtn);
           grid.appendChild(item);
         });
+      }
+
+      function load() {
+        if (useApi) {
+          return fetch('/api/memories')
+            .then(function(r) { return r.ok ? r.json() : []; })
+            .then(function(list) { render(list); })
+            .catch(function() {
+              useApi = false;
+              render(getPhotosLocal());
+            });
+        }
+        render(getPhotosLocal());
       }
 
       btn.addEventListener('click', function() {
@@ -96,28 +134,28 @@
       input.addEventListener('change', function() {
         const files = this.files;
         if (!files.length) return;
-        const toAdd = [];
-        let pending = 0;
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          if (!file.type.startsWith('image/')) continue;
-          pending++;
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            toAdd.push(e.target.result);
-            pending--;
-            if (pending === 0) {
-              const photos = getPhotos().concat(toAdd);
-              savePhotos(photos);
-              render();
-            }
-          };
-          reader.readAsDataURL(file);
+        var validFiles = [];
+        for (var i = 0; i < files.length; i++) {
+          if (files[i].type.startsWith('image/')) validFiles.push(files[i]);
+        }
+        if (!validFiles.length) { this.value = ''; return; }
+        if (useApi) {
+          var fd = new FormData();
+          validFiles.forEach(function(f) { fd.append('photos', f); });
+          fetch('/api/memories', { method: 'POST', body: fd })
+            .then(function(r) { return r.json(); })
+            .then(function() { return load(); })
+            .catch(function() {
+              useApi = false;
+              addPhotosLocal(validFiles);
+            });
+        } else {
+          addPhotosLocal(validFiles);
         }
         this.value = '';
       });
 
-      render();
+      load();
     })();
   </script>
 </body>
