@@ -32,6 +32,7 @@
         <input type="file" id="memoriesUpload" accept="image/*" multiple hidden>
         <button type="button" class="upload-btn" id="uploadBtn">Upload photo</button>
       </div>
+      <p class="memories-note">Photos are stored only in this browser/device. They won’t appear on another phone or computer. You can add as many as you like—they show 3 per row.</p>
     </section>
   </main>
 
@@ -95,15 +96,21 @@
       input.addEventListener('change', function() {
         const files = this.files;
         if (!files.length) return;
-        const photos = getPhotos();
+        const toAdd = [];
+        let pending = 0;
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           if (!file.type.startsWith('image/')) continue;
+          pending++;
           const reader = new FileReader();
           reader.onload = function(e) {
-            photos.push(e.target.result);
-            savePhotos(photos);
-            render();
+            toAdd.push(e.target.result);
+            pending--;
+            if (pending === 0) {
+              const photos = getPhotos().concat(toAdd);
+              savePhotos(photos);
+              render();
+            }
           };
           reader.readAsDataURL(file);
         }
