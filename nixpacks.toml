@@ -1,0 +1,9 @@
+# Force Node.js so Railway/Nixpacks builds this as a Node app
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm ci || npm install"]
+
+[start]
+cmd = "npx serve . -l ${PORT:-3000}"
